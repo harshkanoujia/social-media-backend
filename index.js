@@ -9,6 +9,6 @@ require('./startup/db')()
 require('./startup/routes')(app)
 
 
-// running port
+// Server
 const port = process.env.PORT 
 app.listen( port, () => console.log(`Server is listening on ${port}...`) )

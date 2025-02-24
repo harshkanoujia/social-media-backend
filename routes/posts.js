@@ -6,22 +6,18 @@ const router = express.Router()
 
 // post create
 router.post('/', async ( req, res ) => {
-    // try {
-        const { error } = validatePost( req.body )
-        if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
 
-        const createPost = new Post({
-            title: req.body.title
-        })
-        if( !createPost ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Error while creating Post'}})
-        
-        const result = await createPost.save()
-        
-        return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: result }})
-    // } catch (error) {
-    //     console.log(error)
-    //     return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    // }
+    const { error } = validatePost( req.body )
+    if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
+    
+    const createPost = new Post({
+        title: req.body.title
+    })
+    if( !createPost ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Error while creating Post'}})
+    
+    const result = await createPost.save()
+    
+    return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: result }})
 })
 
 // get all posts 
@@ -65,15 +61,12 @@ router.get('/:id', async ( req, res ) => {
     if ( !mongoose.Types.ObjectId.isValid(req.params.id) ) {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
-    try {     
+         
         const countLikes = await Post.findOne({ _id: req.params.id })
         if ( !countLikes ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
 
         return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: countLikes } })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
+
 })
 
 // post update
@@ -83,7 +76,7 @@ router.put('/:id', async ( req, res ) => {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
 
-    try {
+    
         const { error } = validatePost( req.body )
         if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
 
@@ -95,10 +88,7 @@ router.put('/:id', async ( req, res ) => {
         const result = await updatePost.save()
         return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: result }})
 
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
+
 })
 
 // post delete
@@ -107,16 +97,13 @@ router.delete('/:id', async ( req, res ) => {
     if ( !mongoose.Types.ObjectId.isValid(req.params.id) ) {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
-    try {
+    
         const deletePost = await Post.deleteOne({ _id: req.params.id })
         if (!deletePost || deletePost.deletedCount === 0 ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not Found'}}) 
 
         return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: 'Post Succussfuly Deleted' , deletePost}})
 
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
+
 })
 
 

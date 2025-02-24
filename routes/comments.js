@@ -6,25 +6,22 @@ const router = express.Router()
 
 // comment create
 router.post('/', async ( req, res ) => {
-    try {
-        const { error } = validateComment( req.body )
-        if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
-        
-        const isPostExist = await Post.findOne({ _id: req.body.postId })
-        if ( !isPostExist) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
+    
+    const { error } = validateComment( req.body )
+    if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
+    
+    const isPostExist = await Post.findOne({ _id: req.body.postId })
+    if ( !isPostExist) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
+    
+    const updateComment = new Comment({
+        postId: req.body.postId,
+        userId: req.body.userId,
+        comment: req.body.comment
+    })
+    
+    await updateComment.save()
+    return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: updateComment }})
 
-        const updateComment = new Comment({
-            postId: req.body.postId,
-            userId: req.body.userId,
-            comment: req.body.comment
-        })
-        await updateComment.save()
-
-        return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: updateComment }})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
 })
  
 // get comments
@@ -104,21 +101,16 @@ router.put('/:id', async ( req, res ) => {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
 
-    try {
-        const { error } = validateLikes( req.body )
-        if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
-        
-        const isComment = await Comment.findOne({ _id: req.params.id })
-        if ( !isComment) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
-        
-        isComment.comment = req.body.comment || isComment.comment
-        const result = await isComment.save()
-
-        return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: result } })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
+    const { error } = validateLikes( req.body )
+    if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
+    
+    const isComment = await Comment.findOne({ _id: req.params.id })
+    if ( !isComment) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
+    
+    isComment.comment = req.body.comment || isComment.comment
+    const result = await isComment.save()
+    
+    return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: result } })
 })
 
 // comment delete
@@ -128,16 +120,10 @@ router.delete('/:id', async ( req, res ) => {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
     
-    try {
-        const commentDel = await Comment.deleteOne({ _id: req.params.id })
-        if ( !commentDel) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
-        
-        return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: 'Comment Remove Successfully' }})
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
+    const commentDel = await Comment.deleteOne({ _id: req.params.id })
+    if ( !commentDel) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found' }})
+    
+    return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: 'Comment Remove Successfully' }})
 })
 
 

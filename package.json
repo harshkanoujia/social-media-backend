@@ -1,5 +1,5 @@
 {
-  "name": "1)-basic",
+  "name": "socialmediaproject",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,7 +18,7 @@
     "mongoose": "^8.10.1",
     "node-cron": "^3.0.3",
     "router": "^2.1.0",
-    "save": "^2.9.0",
+    "twilio": "^5.4.5",
     "winston": "^3.17.0"
   }
 }

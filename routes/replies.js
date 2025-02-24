@@ -6,26 +6,24 @@ const router = express.Router()
 
 //reply create
 router.post('/', async ( req, res ) => {
-    try {
-        const { error } = validateReply( req.body )
-        if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
-        
-        const isPostExist = await Post.findOne({ _id: req.body.postId })
-        if ( !isPostExist) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
+    
+    const { error } = validateReply( req.body )
+    if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
+    
+    const isPostExist = await Post.findOne({ _id: req.body.postId })
+    if ( !isPostExist) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
+    
+    const updateReply = new Reply({
+        postId: req.body.postId,
+        userId: req.body.userId,
+        commentId: req.body.commentId,
+        reply: req.body.reply
+    })
+    
+    await updateReply.save()
+    
+    return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: updateReply }})
 
-        const updateReply = new Reply({
-            postId: req.body.postId,
-            userId: req.body.userId,
-            commentId: req.body.commentId,
-            reply: req.body.reply
-        })
-        await updateReply.save()
-
-        return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: updateReply }})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
 })
 
 //reply update
@@ -35,7 +33,7 @@ router.put('/:id', async ( req, res ) => {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
 
-    try {
+    
         const { error } = validateReply( req.body )
         if( error ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: error.details[0].message }})
         
@@ -46,10 +44,7 @@ router.put('/:id', async ( req, res ) => {
         const result = await isReply.save()
 
         return res.status(200).send({ statusCode: 200, message: 'Success', data: { msg: result } })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
+
 })
 
 //reply delete
@@ -58,17 +53,12 @@ router.delete('/:id', async ( req, res ) => {
     if ( !mongoose.Types.ObjectId.isValid(req.params.id) ) {
         return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id is not valid !' }})
     }
+ 
+    const replyDel = await Reply.deleteOne({ _id: req.params.id })
+    if ( !replyDel) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
+    
+    await replyDel.save()
 
-    try {
-        const replyDel = await Reply.deleteOne({ _id: req.params.id })
-        if ( !replyDel) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Id not found'}})
-        
-        await replyDel.save()
-
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send({ statusCode: 500, message: 'Server Error', Error: error.message})
-    }
 })
 
 
