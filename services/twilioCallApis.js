@@ -1,19 +1,19 @@
-require('dotenv').config()
-const accountSid = process.env.TWILIO_ACCOUNT_SID
-const authToken = process.env.TWILIO_AUTH_TOKEN
+const config = require('config')
+const accountSid = config.get('twilio_credentials.TWILIO_ACCOUNT_SID')
+const authToken = config.get('twilio_credentials.TWILIO_AUTH_TOKEN')
 
 const client = require('twilio')(accountSid, authToken)
 
-const toFrom = process.env.FROM
-const toSend = process.env.TO_SEND
+const toFrom = config.get('smsc_twilio.sms_from_number')
+const toSend = config.get('smsc_twilio.sms_client')
 
-const formWhatsapp = process.env.FROM_WHATSAPP
-const toWhatsapp = process.env.TO_WHATSAPP
-const contentSidAppointment = process.env.CONTENT_SID_APPOINTMENT
-const contentSidOrderNotification = process.env.CONTENT_SID_ORDER_NOTIFICATION
-const contentSidVerificationCode = process.env.CONTENT_SID_VERIFICATION_CODE
+const formWhatsapp = config.get('whatsapp_twilio.FROM_WHATSAPP')
+const toWhatsapp = config.get('whatsapp_twilio.TO_WHATSAPP') 
+const contentSidAppointment = config.get('whatsapp_twilio.CONTENT_SID_APPOINTMENT')
+const contentSidOrderNotification = config.get('whatsapp_twilio.CONTENT_SID_ORDER_NOTIFICATION')
+const contentSidVerificationCode = config.get('whatsapp_twilio.CONTENT_SID_VERIFICATION_CODE')
 
-// call sent
+// call send
 async function sendCall() {
     const call = await client.calls.create({
       from: toFrom,
@@ -25,7 +25,7 @@ async function sendCall() {
     return call.sid
 }
   
-//sms message sent
+//sms message send
 async function sendSmsMessage() {
     const message = await client.messages.create({
         body: 'Hii this message is from Twilio your account is created',
@@ -36,17 +36,17 @@ async function sendSmsMessage() {
     return message.sid
 }
 
-// whats app message send 
-async function sendWhatsappMessage() {
+// whatsapp message send with content sid 
+async function sendWhatsappMsgWithContentSid() {
     const message = await client.messages.create({
         from: formWhatsapp, 
         
-        // contentSid: contentSidAppointment, 
+        contentSid: contentSidAppointment, 
         // contentSid: contentSidOrderNotification, 
-        // contentVariables: '{"1":"12/1","2":"3pm"}',          // key value replaced by its value 
+        contentVariables: '{"1":"12/1","2":"3pm"}',          // key value replaced by its value 
 
-        contentSid: contentSidVerificationCode,
-        contentVariables: '{"1":"409173"}',
+        // contentSid: contentSidVerificationCode,
+        // contentVariables: '{"1":"409173"}',
         to: toWhatsapp      
     })
 
@@ -54,8 +54,8 @@ async function sendWhatsappMessage() {
     return message.sid
 }
 
-// on whatsapp reply message
-async function sendWhatsappReplyMessage() {
+// on whatsapp without contentSid Appiontment reminder          // in this first user have to sent you msg then after you sent msg
+async function sendWhatsappMsgWithBody() {
     const message = await client.messages.create({
         body: 'Your appointment is coming up on July 21 at 3PM',
         from: 'whatsapp:+14155238886',
@@ -69,6 +69,6 @@ async function sendWhatsappReplyMessage() {
 module.exports = {
     sendCall,
     sendSmsMessage,
-    sendWhatsappMessage,
-    sendWhatsappReplyMessage
+    sendWhatsappMsgWithContentSid,
+    sendWhatsappMsgWithBody
 }

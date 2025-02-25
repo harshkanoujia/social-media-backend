@@ -1,6 +1,7 @@
 const express = require('express');
-const { sendCall, sendSmsMessage, sendWhatsappMessage, sendWhatsappReplyMessage } = require('../services/twilioCallApis')
+const { sendCall, sendSmsMessage, sendWhatsappMsgWithContentSid, sendWhatsappMsgWithBody } = require('../services/twilioCallApis')
 const router = express.Router();
+
 
 // create call
 router.post('/', async ( req , res ) => {                                                 
@@ -17,20 +18,21 @@ router.post('/sms', async ( req , res ) => {
     res.status(200).json({ statusCode: 200, message: 'Success', data: { msg: 'Sms Message sent on number', 'MessageSid ': messageSid } })
 })
 
-// send message on whatsapp
-router.post('/whatsapp', async ( req , res ) => {                                                       
+// send message on whatsapp with contentSid
+router.post('/whatsapp/contentsid', async ( req , res ) => {                                                       
     
-    const messageSid = await sendWhatsappMessage()
+    const messageSid = await sendWhatsappMsgWithContentSid()
     
     res.status(200).json({ statusCode: 200, message: 'Success', data: { msg: 'Whatsapp Message sent on number', 'MessageSid ': messageSid } })
 })
 
-// send reply message on whatsapp  
-router.post('/whatsapp/reply', async ( req , res ) => {                                                       
+// send message on whatsapp with body without contentSid  
+router.post('/whatsapp/body', async ( req , res ) => {                                                       
     
-    const messageSid = await sendWhatsappReplyMessage()
+    const messageSid = await sendWhatsappMsgWithBody()
     
     res.status(200).json({ statusCode: 200, message: 'Success', data: { msg: 'Whatsapp reply Message sent on number', 'MessageSid ': messageSid } })
 })
+
 
 module.exports = router;

@@ -1,0 +1,14 @@
+{
+  "environment": "devApp_environment",
+  "port":"socialMedia_port",
+  "dbMlab": "devApp_dbMlab_string",
+  "smsc_twilio.sms_client": "devApp_sms_client",
+  "smsc_twilio.sms_from_number": "devApp_sms_from_number",
+  "twilio_credentials.TWILIO_ACCOUNT_SID": "TWILIO_ACCOUNT_SID",
+  "twilio_credentials.TWILIO_AUTH_TOKEN": "TWILIO_AUTH_TOKEN",
+  "whatsapp_twilio.FROM_WHATSAPP": "FROM_WHATSAPP",
+  "whatsapp_twilio.TO_WHATSAPP": "TO_WHATSAPP",
+  "whatsapp_twilio.CONTENT_SID_APPOINTMENT": "CONTENT_SID_APPOINTMENT",
+  "whatsapp_twilio.CONTENT_SID_ORDER_NOTIFICATION": "CONTENT_SID_ORDER_NOTIFICATION",
+  "whatsapp_twilio.CONTENT_SID_VERIFICATION_CODE": "CONTENT_SID_VERIFICATION_CODE"
+}

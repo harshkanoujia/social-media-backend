@@ -1,4 +1,4 @@
-require('dotenv').config()
+const config = require('config')
 const express = require("express");
 const app = express();
 
@@ -10,5 +10,5 @@ require('./startup/routes')(app)
 
 
 // Server
-const port = process.env.PORT 
+const port = config.get('port')
 app.listen( port, () => console.log(`Server is listening on ${port}...`) )
