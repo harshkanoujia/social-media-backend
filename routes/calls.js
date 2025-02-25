@@ -1,5 +1,7 @@
 const express = require('express');
-const { sendCall, sendSmsMessage, sendWhatsappMsgWithContentSid, sendWhatsappMsgWithBody } = require('../services/twilioCallApis')
+const sendCall = require('../services/twilioCallApis')
+const sendSmsMessage = require('../services/twilioSendSms')
+const { sendWhatsappMsgWithContentSid, sendWhatsappMsgWithBody } = require('../services/twilioWhatsappMsg')
 const router = express.Router();
 
 
