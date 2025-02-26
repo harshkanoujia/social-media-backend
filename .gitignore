@@ -8,5 +8,9 @@
 /logs
 *.log
 
-# local config
+# config files
 /config/default.json
+/config/social-media-3eec4-firebase-adminsdk-fbsvc-5cdabda973.json
+
+# now not uploading because wprking on it
+/services/twilioRoom.js

@@ -6,9 +6,9 @@ const client = require('twilio')(accountSid, authToken)
 
 const formWhatsapp = config.get('whatsapp_twilio.FROM_WHATSAPP')
 const toWhatsapp = config.get('whatsapp_twilio.TO_WHATSAPP') 
-const contentSidAppointment = config.get('whatsapp_twilio.CONTENT_SID_APPOINTMENT')
-const contentSidOrderNotification = config.get('whatsapp_twilio.CONTENT_SID_ORDER_NOTIFICATION')
-const contentSidVerificationCode = config.get('whatsapp_twilio.CONTENT_SID_VERIFICATION_CODE')
+const contentSidAppointment = config.get('whatsapp_twilio.CONTENT_SID_APPOINTMENT')                     // Appointment reminder
+const contentSidOrderNotification = config.get('whatsapp_twilio.CONTENT_SID_ORDER_NOTIFICATION')        // Order Notification
+const contentSidVerificationCode = config.get('whatsapp_twilio.CONTENT_SID_VERIFICATION_CODE')          // Verification codes
 
 
 // whatsapp message send with content sid 

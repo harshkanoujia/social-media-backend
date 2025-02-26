@@ -1,9 +1,9 @@
-require('dotenv').config()
+const config = require('config')
 const mongoose = require("mongoose");
 const ApiLog = require("../models/apiLog");
 
 module.exports = function (req, res, next) {
-    if ( process.env.PORT == 3000 ) {
+    if ( config.get("environment") === "dev" ) {
         console.log({
         host: req.headers["host"],
         contentType: req.headers["content-type"],

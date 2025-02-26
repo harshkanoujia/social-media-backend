@@ -1,5 +1,6 @@
 const express = require('express');
 const { User, validateUserRegister } = require('../models/User');
+const msg = require('../services/fcmModule')
 const router = express.Router();
 
 // create user
@@ -28,5 +29,14 @@ router.get('/', async ( req , res ) => {
 
 })
 
+router.post('/notification', async ( req, res ) => {
+    title =  req.body.title,
+    body = req.body.message
+
+    const result = await msg(title, body)
+
+    console.log(result)
+    res.status(200).send({ message: 'Success' , data: result })
+})
 
 module.exports = router;
