@@ -1,9 +1,6 @@
 # Node files
 /node_modules
 
-# Environment variables
-.env 
-
 #logs files
 /logs
 *.log
@@ -12,5 +9,8 @@
 /config/default.json
 /config/social-media-3eec4-firebase-adminsdk-fbsvc-5cdabda973.json
 
-# now not uploading because wprking on it
+# now not uploading because working on it
 /services/twilioRoom.js
+
+# helper file
+README.md

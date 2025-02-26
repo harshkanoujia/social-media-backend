@@ -1,11 +1,21 @@
 const config = require('config')
-const accountSid = config.get('twilio_credentials.TWILIO_ACCOUNT_SID')
-const authToken = config.get('twilio_credentials.TWILIO_AUTH_TOKEN')
+const twilio = require('twilio')
 
-const client = require('twilio')(accountSid, authToken)
+// live credentials 
+// const accountSid = config.get('twilio_credentials.TWILIO_ACCOUNT_SID')
+// const authToken = config.get('twilio_credentials.TWILIO_AUTH_TOKEN')
+// const toFrom = config.get('call_twilio.call_from_number')
+// const toSend = config.get('call_twilio.call_client')
 
-const toFrom = config.get('call_twilio.call_from_number')
-const toSend = config.get('call_twilio.call_client')
+
+// test credentials 
+const accountSid = config.get('twilio_credentials_test.TWILIO_ACCOUNT_SID_TEST')
+const authToken = config.get('twilio_credentials_test.TWILIO_AUTH_TOKEN_TEST')
+const toFrom = config.get('twilio_credentials_test.FROM_TEST')
+const toSend = config.get('twilio_credentials_test.TO_TEST')
+
+
+const client = twilio(accountSid, authToken)
 
 
 // call send
