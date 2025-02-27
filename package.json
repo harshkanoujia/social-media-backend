@@ -10,10 +10,8 @@
   "engines": {
     "node": ">=22.14.0"
   },
-  "keywords": [],
   "author": "Harsh",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "config": "^3.3.12",
     "dotenv": "^16.4.7",

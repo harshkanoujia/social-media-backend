@@ -1,6 +1,7 @@
 const express = require('express')
+const mongoose  = require('mongoose')
+const {POST_CONSTANTS} = require('../config/constant')
 const { Post, validatePost } = require('../models/Post')
-const  mongoose  = require('mongoose')
 const router = express.Router()
 
 
@@ -13,7 +14,7 @@ router.post('/', async ( req, res ) => {
     const createPost = new Post({
         title: req.body.title
     })
-    if( !createPost ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: 'Error while creating Post'}})
+    if( !createPost ) return res.status(400).send({ statusCode: 400, message: 'Failure', data: { msg: POST_CONSTANTS.ERROR_WHILE_CREATE }})
     
     const result = await createPost.save()
     
