@@ -1,10 +1,10 @@
 const express = require('express');
-const sendCall = require('../services/twilioCallApis')
+const { sendCall, conferenceCall } = require('../services/twilioCallApis')
 const sendSmsMessage = require('../services/twilioSendSms')
 const { sendWhatsappMsgWithContentSid, sendWhatsappMsgWithBody } = require('../services/twilioWhatsappMsg');
 const createRoom = require('../services/twilioRoom');
 const generateToken = require('../services/twilioRoom');
-const { User } = require('../models/User')
+const { User } = require('../models/User');
 const router = express.Router();
 
 
@@ -12,7 +12,12 @@ const router = express.Router();
 router.post('/', async ( req , res ) => {                                                 
     const callSid = await sendCall()
     
-    res.status(200).json({ statusCode: 200, message: 'Success', data: { msg: 'Call will be ring on number', 'CallerSid ': callSid } })
+    res.status(200)
+        .json({ 
+            statusCode: 200, 
+            message: 'Success', 
+            data: { msg: `Call will be ring on number ${ callSid.receiver }`, 'CallerSid ': callSid.SId } 
+        })
 })
 
 // send message on sms
@@ -55,6 +60,30 @@ router.post('/createRoom', async ( req , res ) => {
   
     res.status(200).json({ statusCode: 200, message: 'Success',  "token": token, "roomId": roomId })
 })
+
+// conference call reference 
+router.post('/conference', async ( req , res ) => {
+    const result = await conferenceCall()
+    res.type('text/xml');
+
+    console.log(result.toString())
+    const final = result.toString()
+    res.send(final);
+})
+
+// it will be called by sendCall function
+router.post('/status', (req, res) => {
+    const callStatus = req.body.CallStatus;                 // Twilio se call ka status milega
+    console.log(" \n Twilio Call Status:", callStatus);
+
+    if (callStatus === 'answered') {
+        console.log(" \n  Call uth chuki hai, ab conference me dalne ke liye webhook call hoga.   \n ");
+    } else if (callStatus === 'completed') {
+        console.log("  \n  Call kat chuki hai.  \n ");
+    }
+
+    res.status(200);                                        // Twilio ko batayenge ki response receive ho gaya
+});
 
 
 module.exports = router;

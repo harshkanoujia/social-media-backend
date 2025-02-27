@@ -15,6 +15,7 @@ const error = require('../middleware/errorHandling')
 
 module.exports = function (app) {
     app.use(express.json())
+    app.use(express.urlencoded({ extended: true }));                // Twilio ke request data ko parse karne ke liye
     app.use(logger)
 
     app.use('/api/call', call)

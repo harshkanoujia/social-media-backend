@@ -17,7 +17,6 @@ const apiSecret = config.get("twilio_credentials.TWILIO_API_SECRET");
 const AccessToken = require("twilio").jwt.AccessToken;              // Twilio ke JWT (JSON Web Token) ka module hai jo authentication ke liye use hota hai.
 const VideoGrant = AccessToken.VideoGrant;                          // Twilio Video service ka access dene ke liye required hai.
 const VoiceGrant = AccessToken.VoiceGrant;                          // Twilio Voice calls ke access ke liye hota hai, lekin is function me use nahi ho raha.
-const VoiceResponse = require("twilio").twiml.VoiceResponse;        // Twilio Voice ke TwiML responses handle karne ke liye use hota hai, but yaha iska koi use nahi hai.
 
 
 // token generate for joining the room 
