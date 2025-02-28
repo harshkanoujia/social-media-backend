@@ -8,7 +8,7 @@ const { User } = require('../models/User');
 const router = express.Router();
 
 
-// create call
+// create call          // hit with start the ngrok and that link would be in the twilio
 router.post('/', async ( req , res ) => {                                                 
     const callSid = await sendCall()
     
@@ -66,9 +66,7 @@ router.post('/conference', async ( req , res ) => {
     const result = await conferenceCall()
     res.type('text/xml');
 
-    console.log(result.toString())
-    const final = result.toString()
-    res.send(final);
+    res.send(result.toString());
 })
 
 // it will be called by sendCall function
@@ -77,9 +75,9 @@ router.post('/status', (req, res) => {
     console.log(" \n Twilio Call Status:", callStatus);
 
     if (callStatus === 'answered') {
-        console.log(" \n  Call uth chuki hai, ab conference me dalne ke liye webhook call hoga.   \n ");
+        console.log(" \n  Call is pickup, ab conference me dalne ke liye webhook call hoga.   \n ");
     } else if (callStatus === 'completed') {
-        console.log("  \n  Call kat chuki hai.  \n ");
+        console.log("  \n  Call is End now.  \n ");
     }
 
     res.status(200);                                        // Twilio ko batayenge ki response receive ho gaya
