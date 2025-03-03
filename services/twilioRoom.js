@@ -20,18 +20,18 @@ const VoiceGrant = AccessToken.VoiceGrant;                          // Twilio Vo
 
 
 // token generate for joining the room 
-async function genreateToken(identity, room) {
+async function generateToken(identity, room) {
     // Token Initialization (Corrected Order)
     const token = new AccessToken(accountSid, apiKey, apiSecret, { identity });
-    console.log("TOKEN  ==> ", token, '\n');
-
     token.identity = identity;
   
     // Grant the access token Twilio Video capabilities
     const grant = new VideoGrant();
     grant.room = room;
     token.addGrant(grant);
-  
+    
+    console.log("TOKEN Grant  ==> ", token, '\n');
+
     // Serialize the token to a JWT string
     return token.toJwt();
 }
@@ -43,12 +43,11 @@ async function createRoom(roomName) {
       uniqueName: roomName,
     });
 
-    console.log("Created ==> ", room);
-    console.log("Room Id Created ==> ", room.sid);
-    return room.sid;
+    return ({ roomSID: room.sid, roomName: roomName , roomDetails: room })
 }
 
 
-
-module.exports = genreateToken;
-module.exports = createRoom;
+module.exports = {
+    generateToken,
+    createRoom
+}

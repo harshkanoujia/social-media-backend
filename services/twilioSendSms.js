@@ -25,8 +25,10 @@ async function sendSmsMessage() {
         from: toFrom,
         to: toSend
     })
+
     console.log( "Message Id => " , message.sid )
-    return message.sid
+    return ({ SId: message.sid, receiver: toSend })
+
 }
 
 

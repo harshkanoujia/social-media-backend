@@ -26,7 +26,7 @@ async function sendWhatsappMsgWithContentSid() {
     })
 
     console.log( "Message Id => " , message.sid )
-    return message.sid
+    return ({ SId: message.sid, receiver: toWhatsapp })
 }
 
 // on whatsapp without contentSid Appiontment reminder          // in this first user have to sent you msg then after you sent msg
@@ -38,7 +38,7 @@ async function sendWhatsappMsgWithBody() {
     })
 
     console.log( "Message Id => " , message.sid )
-    return message.sid
+    return ({ SId: message.sid, receiver: toWhatsapp })
 }
 
 module.exports = {
