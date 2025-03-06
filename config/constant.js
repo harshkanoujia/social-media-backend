@@ -1,6 +1,7 @@
 const SYSTEM_FAILURE = "Something failed.";
 const INVALID_USER = "No user registered with given Id";
 const INACTIVE_ACCOUNT = "Account is not active. Please get in touch with app admin.";
+const INVALID_REQUEST = "Invalid request ! Please provide valid Id or email "
 
 // middleware auth
 const MIDDLEWARE_AUTH_CONSTANTS = {
@@ -69,7 +70,8 @@ const USER_CONSTANTS = {
   INVALID_OTP: "Invalid OTP passed",
   OTP_MISSING: "No OTP passed. OTP is required for registration.",
   LOGGED_OUT: "Logged Out successfully",
-  VERIFICATION_SUCCESS: "Continue for OTP."
+  VERIFICATION_SUCCESS: "Continue for OTP.",
+  LOGIN_SUCCESS: "Login successfully",
 };
 
 const CALL_CONSTANTS = {
@@ -97,3 +99,4 @@ module.exports.OTP_CONSTANTS = OTP_CONSTANTS;
 module.exports.USER_CONSTANTS = USER_CONSTANTS;
 module.exports.CALL_CONSTANTS = CALL_CONSTANTS;
 module.exports.POST_CONSTANTS = POST_CONSTANTS;
+module.exports.INVALID_REQUEST = INVALID_REQUEST;

@@ -10,5 +10,5 @@ require('./startup/routes')(app)
 
 
 // Server
-const port = config.get('port')
-app.listen( port, () => console.log(`Server is listening on ${port}...`) )
+const port = process.env.PORT || config.get('port')
+app.listen( port, () => console.info(`Server is listening on ${port}...`) )

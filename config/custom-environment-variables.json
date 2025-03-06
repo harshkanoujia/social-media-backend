@@ -1,19 +1,47 @@
 {
-  "environment": "devApp_environment",
-  "port":"socialMedia_port",
-  "dbMlab": "devApp_dbMlab_string",
-  "firebase_realtime_db": "your_realtime_firebase_db",
-  "smsc_twilio.sms_client": "devApp_sms_client",
-  "smsc_twilio.sms_from_number": "devApp_sms_from_number",
-  "twilio_credentials.TWILIO_ACCOUNT_SID": "TWILIO_ACCOUNT_SID",
-  "twilio_credentials.TWILIO_AUTH_TOKEN": "TWILIO_AUTH_TOKEN",
-  "whatsapp_twilio.FROM_WHATSAPP": "FROM_WHATSAPP",
-  "whatsapp_twilio.TO_WHATSAPP": "TO_WHATSAPP",
-  "whatsapp_twilio.CONTENT_SID_APPOINTMENT": "CONTENT_SID_APPOINTMENT",
-  "whatsapp_twilio.CONTENT_SID_ORDER_NOTIFICATION": "CONTENT_SID_ORDER_NOTIFICATION",
-  "whatsapp_twilio.CONTENT_SID_VERIFICATION_CODE": "CONTENT_SID_VERIFICATION_CODE",
-  "twilio_credentials_test.TWILIO_ACCOUNT_SID_TEST": "TWILIO_ACCOUNT_SID_TEST",
-  "twilio_credentials_test.TWILIO_AUTH_TOKEN_TEST": "TWILIO_AUTH_TOKEN_TEST",
-  "twilio_credentials_test.TO_TEST": "TO_TEST",
-  "twilio_credentials_test.FROM_TEST": "FROM_TEST"
+    "environment": "devApp_environment",
+    "port": "socialMedia_port",
+    "dbMlab": "devApp_dbMlab_string",
+    "firebase_realtime_db": "realtime_firebase_db",
+    
+    "smsc_twilio": {
+        "sms_client": "devApp_sms_client",
+        "sms_from_number": "devApp_sms_from_number"
+    },
+
+    "call_twilio": {
+        "call_client": "devApp_call_client",
+        "call_from_number": "devApp_call_from_number"
+    },
+    
+    "twilio_credentials": {
+        "TWILIO_ACCOUNT_SID": "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN": "TWILIO_AUTH_TOKEN",
+        "TWILIO_API_KEY": "TWILIO_API_KEY",
+        "TWILIO_API_SECRET": "TWILIO_API_SECRET"
+    },
+    
+    "whatsapp_twilio":{
+        "FROM_WHATSAPP": "whatsapp:FROM_WHATSAPP",
+        "TO_WHATSAPP": "whatsapp:TO_WHATSAPP",
+        "CONTENT_SID_APPOINTMENT": "CONTENT_SID_APPOINTMENT",            
+        "CONTENT_SID_ORDER_NOTIFICATION": "CONTENT_SID_ORDER_NOTIFICATION",     
+        "CONTENT_SID_VERIFICATION_CODE": "CONTENT_SID_VERIFICATION_CODE"       
+    },
+    
+    "twilio_credentials_test": {
+        "TWILIO_ACCOUNT_SID_TEST": "TWILIO_ACCOUNT_SID_TEST",
+        "TWILIO_AUTH_TOKEN_TEST": "TWILIO_AUTH_TOKEN_TEST",
+        "TO_TEST": "devApp_test_client", 
+        "FROM_TEST": "devApp_test_from_number"
+    },
+
+    "firebase_config": {
+        "apiKey": "api_key",
+        "authDomain": "project.firebaseapp.com",
+        "projectId": "project_id",
+        "storageBucket": "project.appspot.com",
+        "messagingSenderId": "messaging_sender_id",
+        "appId": "app_id"
+    }
 }

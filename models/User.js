@@ -17,6 +17,7 @@ function validateUserRegister(user){
     return Schema.validate(user)
 }
 
+
 module.exports = {
     User,
     validateUserRegister

@@ -1,10 +1,10 @@
 # Node files
-/node_modules
+node_modules
 
 #logs files
-/logs
-*.log
+logs
 
 # config files
-/config/default.json
-/config/social-media-3eec4-firebase-adminsdk-fbsvc-5cdabda973.json
+config/default.json
+config/firebase-app.json
+config/social-media-3eec4-firebase-adminsdk-fbsvc-d6e52b8bc7.json
