@@ -22,6 +22,8 @@ module.exports = function (req, res, next) {
         res.removeListener("error", loggerFunction);
     };
 
+    let baseUrl = req.baseUrl || req.originalUrl.split("?")[0].split("/").slice(0, 3).join("/") ;       // README
+
     const loggerFunction = async () => {
     cleanup();
         try {
@@ -32,7 +34,22 @@ module.exports = function (req, res, next) {
                 if (req.route) {
                     routePath = req.route.path;
                 }
-                await logApis(req.apiId, req.method, req.reqUserId, req.reqLabId, req.originalUrl, req.baseUrl + routePath, req.baseUrl, req.query, req.params, req.body, req.startTime, endTime, responseTimeInMilli, res.statusCode, res.errorMessage);
+                await logApis(
+                    req.apiId, 
+                    req.method, 
+                    req.reqUserId, 
+                    req.originalUrl, 
+                    baseUrl + routePath, 
+                    baseUrl, 
+                    req.query, 
+                    req.params, 
+                    req.body, 
+                    req.startTime, 
+                    endTime, 
+                    responseTimeInMilli, 
+                    res.statusCode, 
+                    res.errorMessage
+                );
             }
         } catch (err) {
           console.log("Exception in logging: ", err );
@@ -47,12 +64,11 @@ module.exports = function (req, res, next) {
     next();
 };
 
-async function logApis( apiId, method, userId, labId, completeUrl, url, baseUrl, query, params, body, startTime, endTime, responseTimeInMilli, statusCode, errorMessage ) {
+async function logApis( apiId, method, userId, completeUrl, url, baseUrl, query, params, body, startTime, endTime, responseTimeInMilli, statusCode, errorMessage ) {
     let apiLog = new ApiLog({
         apiId,
         method,
         userId,
-        labId,
         completeUrl,
         url,
         baseUrl,

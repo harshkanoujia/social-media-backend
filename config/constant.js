@@ -1,7 +1,12 @@
 const SYSTEM_FAILURE = "Something failed.";
 const INVALID_USER = "No user registered with given Id";
 const INACTIVE_ACCOUNT = "Account is not active. Please get in touch with app admin.";
-const INVALID_REQUEST = "Invalid request ! Please provide valid Id or email "
+const INVALID_REQUEST = "Invalid request ! Please provide valid Id or email ";
+const INVALID_UID = "Invalid request ! Please provide valid Id ";
+const TOKEN_ERROR = "Something went wrong while generating the token."
+const TOKEN_SUCCESS = "Token genreated successfully. you have to convert to this token to Firebase Id Token";
+const TOKEN_EXPIRE = "Firebase ID token has expired. Get a fresh ID token ! generateCustomToken or generate from firebase id-token";
+
 
 // middleware auth
 const MIDDLEWARE_AUTH_CONSTANTS = {
@@ -43,21 +48,6 @@ const AUTH_CONSTANTS = {
   ACCOUNT_DELETED_SUCCESSFULLY: "Your account has been deleted successfully.",
 };
 
-// OTP.js
-const OTP_CONSTANTS = {
-  INVALID_USER: INVALID_USER,
-  NO_USER_REGISTERED_ERROR: "No user registered with given mobile number",
-  DUPLICATE_MOBILE_NUMBER: "Mobile number entered is already registered. Please try to login.",
-  INVALID_MOBILE_NUMBER: "Invalid mobile number entered. Please provide valid US mobile number.",
-  EMAIL_SENDING_FAILED: "Email sending failed due to some application issue",
-  OTP_GENERATED_SUCCESSFULLY: "Verification code generated successfully",
-  OTP_VERIFIED: "Verification code verified for new user",
-  INVALID_OTP: "Invalid Code",
-  OTP_MAX_LIMIT_ERROR: "Max attempts to verify code breached",
-  OTP_EXPIRED: "Verification code expired",
-  OTP_VERIFIED_NEW_USER: "Verification code verified for new user"
-};
-
 // users.js
 const USER_CONSTANTS = {
   INACTIVE_ACCOUNT: INACTIVE_ACCOUNT,
@@ -91,12 +81,15 @@ const CALL_CONSTANTS = {
 };
 
 
+module.exports.INVALID_UID = INVALID_UID;
+module.exports.TOKEN_ERROR = TOKEN_ERROR;
+module.exports.TOKEN_EXPIRE = TOKEN_EXPIRE;
+module.exports.TOKEN_SUCCESS = TOKEN_SUCCESS;
 module.exports.SYSTEM_FAILURE = SYSTEM_FAILURE;
-module.exports.MIDDLEWARE_AUTH_CONSTANTS = MIDDLEWARE_AUTH_CONSTANTS;
 module.exports.AUTH_CONSTANTS = AUTH_CONSTANTS;
-module.exports.ADMIN_CONSTANTS = ADMIN_CONSTANTS;
-module.exports.OTP_CONSTANTS = OTP_CONSTANTS;
 module.exports.USER_CONSTANTS = USER_CONSTANTS;
 module.exports.CALL_CONSTANTS = CALL_CONSTANTS;
 module.exports.POST_CONSTANTS = POST_CONSTANTS;
 module.exports.INVALID_REQUEST = INVALID_REQUEST;
+module.exports.ADMIN_CONSTANTS = ADMIN_CONSTANTS;
+module.exports.MIDDLEWARE_AUTH_CONSTANTS = MIDDLEWARE_AUTH_CONSTANTS;
