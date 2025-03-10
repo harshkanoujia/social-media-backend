@@ -2,8 +2,10 @@
     "environment": "devApp_environment",
     "port": "socialMedia_port",
     "dbMlab": "devApp_dbMlab_string",
-    "firebase_realtime_db": "realtime_firebase_db",
-    
+    "firebase_realtime_db": "dev_realtime_firebase_db",
+    "sender_email": "dev_sender_email",
+    "app_password_gmail": "dev_app_password_gmail",
+
     "smsc_twilio": {
         "sms_client": "devApp_sms_client",
         "sms_from_number": "devApp_sms_from_number"

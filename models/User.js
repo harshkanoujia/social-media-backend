@@ -17,8 +17,18 @@ function validateUserRegister(user){
     return Schema.validate(user)
 }
 
+function validateUserUpdate(user){
+    const Schema = Joi.object({
+        username: Joi.string().allow("").allow(null),
+        email: Joi.string().email().allow("").allow(null),    
+        password: Joi.string().allow("").allow(null),
+    })
+    return Schema.validate(user)
+}
+
 
 module.exports = {
     User,
-    validateUserRegister
+    validateUserRegister,
+    validateUserUpdate
 }

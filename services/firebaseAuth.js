@@ -58,9 +58,22 @@ async function verifyIdToken(token) {
     }
 }
 
+// update user
+async function updateUser( uid, properties ) {
+    try {
+        let user = await admin.auth().updateUser(uid, properties)
+        return user;
+
+    } catch (error) {
+        console.log("Firebase Error ==> ", error);
+        return null;
+    }
+}
+
 
 module.exports.admin = admin;
 module.exports.getUser = getUser;
+module.exports.updateUser = updateUser;
 module.exports.verifyIdToken = verifyIdToken;
 module.exports.getUserByEmail = getUserByEmail;
 module.exports.createCustomToken = createCustomToken;

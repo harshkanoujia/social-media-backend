@@ -5,7 +5,7 @@ const INVALID_REQUEST = "Invalid request ! Please provide valid Id or email ";
 const INVALID_UID = "Invalid request ! Please provide valid Id ";
 const TOKEN_ERROR = "Something went wrong while generating the token."
 const TOKEN_SUCCESS = "Token genreated successfully. you have to convert to this token to Firebase Id Token";
-const TOKEN_EXPIRE = "Firebase ID token has expired. Get a fresh ID token ! generateCustomToken or generate from firebase id-token";
+const TOKEN_EXPIRE = "Firebase ID token has expired. Get a fresh ID token ! generate token with CustomToken or generate from firebase id-token";
 
 
 // middleware auth
@@ -56,7 +56,7 @@ const USER_CONSTANTS = {
   EMAIL_ALREADY_EXISTS: "Email already registered",
   MOBILE_ALREADY_EXISTS: "Mobile number already registered",
   USERNAME_ALREADY_EXISTS: "UserName already registered",
-  ALL_CHECKS_VALID: "All check are valid. Proceed for OTP",
+  ALL_CHECKS_VALID: "All check are valid. Verify your email",
   INVALID_OTP: "Invalid OTP passed",
   OTP_MISSING: "No OTP passed. OTP is required for registration.",
   LOGGED_OUT: "Logged Out successfully",

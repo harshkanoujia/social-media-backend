@@ -1,7 +1,8 @@
 const express = require('express');
-const { User, validateUserRegister } = require('../models/User');
+const { User, validateUserRegister, validateUserUpdate } = require('../models/User');
 const { admin, getUserByEmail, createCustomToken, verifyIdToken, getUser } = require('../services/firebaseAuth');
 const { USER_CONSTANTS, AUTH_CONSTANTS, MIDDLEWARE_AUTH_CONSTANTS, INVALID_REQUEST, INVALID_UID, TOKEN_ERROR, TOKEN_SUCCESS, TOKEN_EXPIRE } = require('../config/constant');
+const { sendMail } = require('../services/nodeMailer');
 const router = express.Router();
 
 // create user
@@ -61,6 +62,14 @@ router.post('/firebase/signup', async ( req, res ) => {
 
     console.log("User Register ==> ", user);
     
+    // genereate the verification link through firebase
+    const verificationLink = await admin.auth().generateEmailVerificationLink(email);
+    console.log("Verification Link : ", verificationLink);
+    
+    // send the verification mail through nodemailer
+    const sendMailer = await sendMail(email, verificationLink);
+    console.log("NodeMailer sent mail : ", sendMailer);
+
     // custom token generate we have to convert this token to firebase IdToken 
     const token = await createCustomToken(user.uid)
     if (!token)   
@@ -71,9 +80,9 @@ router.post('/firebase/signup', async ( req, res ) => {
         apiId: req.apiId, 
         statusCode: 200, 
         message: 'Success', 
-        data: { UserId: user.uid } 
+        data: { message: USER_CONSTANTS.ALL_CHECKS_VALID, UserId: user.uid, sendMailer: sendMailer.messageId } 
     }); 
-})
+});
 
 // custom token generate via id or email
 router.post('/firebase/token/:id?', async ( req, res ) => {
@@ -128,7 +137,7 @@ router.post('/firebase/token/:id?', async ( req, res ) => {
     } else {
         return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: INVALID_REQUEST } });
     }
-})
+});
 
 // login user with firebase
 router.post('/firebase/login', async ( req , res ) => {                                                 
@@ -149,7 +158,29 @@ router.post('/firebase/login', async ( req , res ) => {
         return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: MIDDLEWARE_AUTH_CONSTANTS.INVALID_AUTH_TOKEN } });  
     }
     
+    // is email verified then login code pending
+
     console.log("USER LOGIN  ==> ", user);
+
+    res.status(200).json({ 
+        apiId: req.apiId, 
+        statusCode: 200, 
+        message: 'Success', 
+        data: { message: USER_CONSTANTS.LOGIN_SUCCESS , UserId: user.uid } 
+    })
+});
+
+// login user with firebase
+router.post('/firebase/signin', async ( req , res ) => {                                                 
+    
+    const email = req.body.email?.trim().toLowerCase();
+
+    // check user exist or not
+    let user = await getUserByEmail(email);
+    if (user) 
+        return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: USER_CONSTANTS.EMAIL_ALREADY_EXISTS } });
+
+
 
     res.status(200).json({ 
         apiId: req.apiId, 
@@ -157,7 +188,7 @@ router.post('/firebase/login', async ( req , res ) => {
         message: 'Success', 
         data: { message: USER_CONSTANTS.LOGIN_SUCCESS, UserId: user.uid } 
     })
-})
+});
 
 //get user with UId or email
 router.get('/firebase/:id?', async ( req , res ) => {                                                       
@@ -200,7 +231,43 @@ router.get('/firebase/:id?', async ( req , res ) => {
     } else {
         return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: INVALID_REQUEST } });
     }
-})
+});
+
+// update user
+// router.put('/firebase', async ( req, res ) => {
+//     /* In Firebase only this data can save if we give another data it wont save we have to use realtimeDb or firestore                                               
+//     uid (User ID), email, displayName, phoneNumber (if exist), photoURL (if exist), emailVerified (default: false), disabled (default: false) */
+      
+//     // validate body
+//     const {error} = validateUserUpdate( req.body );
+//     if (error) return res.status(400).json({ apiId: req.apiId, statusCode: 400, message:'Failure', err: error.details[0].message });
+    
+//     const email = req.body.email?.trim().toLowerCase();
+//     const username = req.body.username
+
+//     // check user exist or not
+//     let user = await getUserByEmail(email);
+//     if (user) 
+//         return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: AUTH_CONSTANTS.INVALID_EMAIL } });
+
+//     console.log("User Register ==> ", user);
+    
+
+//     // // custom token generate we have to convert this token to firebase IdToken 
+//     // const token = await createCustomToken(user.uid)
+//     // if (!token)   
+//     //     return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: INVALID_UID } });
+    
+
+//     res.header('Authorization', token).status(200).json({ 
+//         apiId: req.apiId, 
+//         statusCode: 200, 
+//         message: 'Success', 
+//         data: { UserId: user.uid } 
+//     }); 
+// })
+
+
 
 
 
@@ -411,6 +478,9 @@ router.get('/firebase/:id?', async ( req , res ) => {
     }
 })
 */
+
+
+
 
 
 module.exports = router;
