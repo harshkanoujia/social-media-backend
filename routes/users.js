@@ -1,25 +1,116 @@
+const config = require("config");
+const bcrypt = require('bcryptjs');
 const express = require('express');
-const { User, validateUserRegister, validateUserUpdate } = require('../models/User');
-const { admin, getUserByEmail, createCustomToken, verifyIdToken, getUser } = require('../services/firebaseAuth');
-const { USER_CONSTANTS, AUTH_CONSTANTS, MIDDLEWARE_AUTH_CONSTANTS, INVALID_REQUEST, INVALID_UID, TOKEN_ERROR, TOKEN_SUCCESS, TOKEN_EXPIRE } = require('../config/constant');
-const { sendMail } = require('../services/nodeMailer');
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-// create user
-router.post('/', async ( req , res ) => {                                                 
+const { sendMail } = require('../services/nodeMailer');
+const { User, validateUserRegister, validateUserUpdate, validateUserLogin } = require('../models/User');
+const { admin, getUserByEmail, createCustomToken, verifyIdToken, getUser } = require('../services/firebaseAuth');
+const { USER_CONSTANTS, AUTH_CONSTANTS, MIDDLEWARE_AUTH_CONSTANTS, INVALID_REQUEST, INVALID_UID, TOKEN_ERROR, TOKEN_SUCCESS, TOKEN_EXPIRE } = require('../config/constant');
+
+
+// User can signup 
+router.post('/signup', async ( req , res ) => {                                                 
     
     const {error} = validateUserRegister( req.body )
     if (error) return res.status(400).json({ apiId: req.apiId, statusCode: 400, msg: 'Validation failed', err: error.details[0].message })
+    
+    // const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash( req.body.password.trim(), config.get("bcryptSalt") )                        //We add trim here because it does not store the password with trimming it. So we explicity add it
     
     // new user 
     const user = new User({
         username: req.body.username,
         email: req.body.email,
         phoneNo: req.body.phoneNo,
-        password: req.body.password,
+        password: hashedPassword,
     })
+    const token = jwt.sign({ email: req.body.email.trim().toLowerCase() , _id: user._id }, config.get('jwtPrivateKey') , { expiresIn: '70d'});
+            
+    user.token = token;
     await user.save();
-    res.status(200).json({ apiId: req.apiId, statusCode: 200, message: 'Success', data: { msg: 'User Created Successfully', User: user } }); 
+    
+    // cookies 
+    res.cookie('Token', token, { 
+        maxAge: 70 * 24 * 60 * 60 * 1000,         // 70 days  same as token expiry
+        httpOnly: true 
+    }); 
+
+    return res.header("Authorization", token).status(200).json({ apiId: req.apiId, statusCode: 200, message: 'Success', data: { msg: 'User Created Successfully', User: user } }); 
+})
+
+// User login
+router.post('/login', async (req, res) => {                                                 
+    
+    const {error} = validateUserLogin(req.body)
+    if (error) return res.status(400).json({ msg: 'Validation failed', err: error.details[0].message})
+            
+    const user = await User.findOne({ email: req.body.email.toLowerCase() });
+    if (!user) return res.status(400).json({msg: "Email not found"})  
+        
+    console.log(user.password)
+    
+    const verifyPassword =  await bcrypt.compare( req.body.password.trim(), user.password );
+    if (!verifyPassword) return res.status(400).json({ err: 'Password not match !'});
+    
+    const token = jwt.sign({ email: req.body.email.trim().toLowerCase(), _id: user._id }, config.get('jwtPrivateKey') , { expiresIn: '70d'});
+            
+    user.token = token;
+    await user.save();
+
+    // cookies 
+    res.cookie('Token', token, { maxAge: 70 * 24 * 60 * 60 * 1000, httpOnly: true });
+
+    return res.header('Authorization', token).status(200).json({ apiId: req.apiId, statusCode: 200, message: 'Success', data: { message: USER_CONSTANTS.LOGIN_SUCCESS, UserId: user.id } }); 
+})
+
+// User can logout with providing email and token in headers
+router.post('/logout', async (req, res) => {                                   
+
+    const user = await User.findOne({ email: req.body.email.trim().toLowerCase() })                                 
+    if (!user) return res.status(400).json({ err: "Invalid email" })
+    
+    user.token = ""
+    await user.save();
+
+    // clear cookie
+    res.clearCookie('Token');
+    
+    return res.status(200).json({ apiId: req.apiId, statusCode: 200, message: 'Success', data: { message: "Successfully Logout", User: user } }); 
+})
+
+// User can update own account
+router.put('/:id', async (req, res) => {                                                   
+    const {error} = validateUserUpdate(req.body)
+    if (error) return res.status(400).json({msg: 'Validation failed', err: error.details[0].message})
+        
+    
+    const hashedPassword = await bcrypt.hash(req.body.password, config.get("bcryptSalt"))
+    
+    const user = await User.findByIdAndUpdate(req.params.id, {      
+      $set: { 
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword
+    }
+    }, { new: true })
+    if (!user) return res.status(400).json({msg: "ID not found"})
+
+    const token = jwt.sign({ email: req.body.email.trim().toLowerCase(), _id: user._id }, config.get('jwtPrivateKey') , { expiresIn: '70d'});
+            
+    user.token = token
+    await user.save();
+        
+    res.status(201).json({ msg: 'User Updated Successfully', User : user })
+})
+
+// User can delete there own account
+router.delete('/:id', async (req, res) => {                                                 
+    const user = await User.findByIdAndDelete(req.params.id)
+    if (!user) return res.status(400).json({msg: "ID not found"})
+
+    res.status(200).json({ msg: 'User Deleted Successfully', User : user })
 })
 
 //get user 
@@ -30,6 +121,46 @@ router.get('/', async ( req , res ) => {
     
     res.status(200).json({ "Users": users })
 })
+
+// User found by its Id
+router.get('/:id', async (req, res) => {     
+    
+    const token = req.cookies.Token;
+    if(!token)  return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Success', data: { message: MIDDLEWARE_AUTH_CONSTANTS.INVALID_AUTH_TOKEN } }); 
+    
+    const decode = jwt.verify(token, config.get("jwtPrivateKey"));
+    req = decode;
+    console.log("REQ: ", req)  
+
+    const user = await User.findById(req._id)
+    console.log("DECODE: ", decode)  
+
+    if (!user) return res.status(400).json({err: "ID not found"})
+    
+    res.status(200).json({'User': user })
+})
+
+
+
+// ------------ Cookie ------------------------ 
+
+router.get("/set-cookie", async (req, res) => {
+    
+    res.cookie('username', 'harsh', {   // we set a cookie named and its value
+        maxAge: 900000,                 // 15 min 
+        // secure: true,                   // Cookie sirf HTTPS par hi kaam karegi.
+        httpOnly: true                  // httpOnly option to true to make the cookie accessible only via HTTP requests
+    })       
+
+    res.status(200).send('cookie-set');
+});
+ 
+router.get('/get-cookie', async (req, res) => {
+    const username = req.cookies.username;
+    console.log(username);
+    return res.status(200).json(`Username: ${username}`);
+})
+
 
 
 //----------- Firebase ---------------
@@ -62,7 +193,7 @@ router.post('/firebase/signup', async ( req, res ) => {
 
     console.log("User Register ==> ", user);
     
-    // genereate the verification link through firebase
+    // generate the verification link through firebase
     const verificationLink = await admin.auth().generateEmailVerificationLink(email);
     console.log("Verification Link : ", verificationLink);
     
@@ -233,11 +364,9 @@ router.get('/firebase/:id?', async ( req , res ) => {
     }
 });
 
-// update user
+// // update user
 // router.put('/firebase', async ( req, res ) => {
-//     /* In Firebase only this data can save if we give another data it wont save we have to use realtimeDb or firestore                                               
-//     uid (User ID), email, displayName, phoneNumber (if exist), photoURL (if exist), emailVerified (default: false), disabled (default: false) */
-      
+
 //     // validate body
 //     const {error} = validateUserUpdate( req.body );
 //     if (error) return res.status(400).json({ apiId: req.apiId, statusCode: 400, message:'Failure', err: error.details[0].message });
@@ -266,7 +395,6 @@ router.get('/firebase/:id?', async ( req , res ) => {
 //         data: { UserId: user.uid } 
 //     }); 
 // })
-
 
 
 
@@ -478,9 +606,6 @@ router.get('/firebase/:id?', async ( req , res ) => {
     }
 })
 */
-
-
-
 
 
 module.exports = router;

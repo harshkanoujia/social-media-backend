@@ -13,10 +13,15 @@ const logger = winston.createLogger({
 });
 
 module.exports = function ( err, req, res, next ) {
-    logger.error( err.message, err )
     
+    logger.error( err.message, err )
+
     console.log(err);
     res.errorMessage = err.message
 
+    if (err.code === 11000 ) {
+        return res.status(400).send({ apiId: req.apiId, statusCode: 400, message: "Mongoose Validation Error! Duplicate Key not allowed" , Error: err.message })
+    }
+    
     res.status(500).send({ apiId: req.apiId, statusCode: 500, message: "Something not working Properly" , Error: err.message })
 }
