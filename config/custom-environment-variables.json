@@ -2,6 +2,8 @@
     "environment": "devApp_environment",
     "port": "socialMedia_port",
     "dbMlab": "devApp_dbMlab_string",
+    "jwtPrivateKey": "dev_app_secret_key",
+    "bcryptSalt": "dev_app_bcrypt",
     "firebase_realtime_db": "dev_realtime_firebase_db",
     "sender_email": "dev_sender_email",
     "app_password_gmail": "dev_app_password_gmail",

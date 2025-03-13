@@ -5,9 +5,11 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 const { sendMail } = require('../services/nodeMailer');
+const { sendNotification } = require("../services/fcmModule");
 const { User, validateUserRegister, validateUserUpdate, validateUserLogin } = require('../models/User');
 const { admin, getUserByEmail, createCustomToken, verifyIdToken, getUser } = require('../services/firebaseAuth');
 const { USER_CONSTANTS, AUTH_CONSTANTS, MIDDLEWARE_AUTH_CONSTANTS, INVALID_REQUEST, INVALID_UID, TOKEN_ERROR, TOKEN_SUCCESS, TOKEN_EXPIRE } = require('../config/constant');
+
 
 
 // User can signup 
@@ -144,6 +146,7 @@ router.get('/:id', async (req, res) => {
 
 // ------------ Cookie ------------------------ 
 
+// set cookie
 router.get("/set-cookie", async (req, res) => {
     
     res.cookie('username', 'harsh', {   // we set a cookie named and its value
@@ -155,6 +158,7 @@ router.get("/set-cookie", async (req, res) => {
     res.status(200).send('cookie-set');
 });
  
+// get cookie
 router.get('/get-cookie', async (req, res) => {
     const username = req.cookies.username;
     console.log(username);
@@ -363,6 +367,16 @@ router.get('/firebase/:id?', async ( req , res ) => {
         return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Failure', error: { message: INVALID_REQUEST } });
     }
 });
+
+
+// ----------   FCM Notification ---------------------
+
+// push notification
+router.post('/firebase/notification', async (req, res) => {
+    const response = await sendNotification();
+    res.status(200).json({ apiId: req.apiId, statusCode: 200, message: "Success", data: { msg: "the notification is send on device" } });
+})
+
 
 // // update user
 // router.put('/firebase', async ( req, res ) => {
