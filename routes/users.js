@@ -123,7 +123,7 @@ router.get('/', async ( req , res ) => {
 })
 
 // User found by its Id
-router.get('/:id', async (req, res) => {     
+router.get('/:id?', async (req, res) => {     
     
     const token = req.cookies.Token;
     if(!token)  return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Success', data: { message: MIDDLEWARE_AUTH_CONSTANTS.INVALID_AUTH_TOKEN } }); 
@@ -161,6 +161,22 @@ router.get('/get-cookie', async (req, res) => {
     return res.status(200).json(`Username: ${username}`);
 })
 
+
+// ------------ Session ------------------------ 
+
+router.get("/set-session", async (req, res) => {
+    
+    req.session.user = { name: "harsh", age: 20 };      
+    res.status(200).send('Session-set !');
+});
+ 
+router.get('/get-session', async (req, res) => {
+    if (req.session.user) {
+        return res.status(200).json(`Username: ${req.session.user.name}`);
+    }
+
+    return res.status(200).json(`No Session !`);
+})
 
 
 //----------- Firebase ---------------

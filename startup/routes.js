@@ -14,6 +14,12 @@ const Comment = require('../routes/comments');
 const error = require('../middleware/errorHandling');
 
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,  // Secure key
+    resave: false,  // Agar session change na ho to save na kare
+    saveUninitialized: true,  // New session ko save kare bina modify kiye
+    cookie: { maxAge: 15 * 60 * 1000 } // 15 min expiry
+}));
 module.exports = function (app) {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));                // Twilio ke request data ko parse karne ke liye
