@@ -1,7 +1,14 @@
 const config = require('config');
 const express = require("express");
-const winston = require('winston');
 const app = express();
+
+
+app.set('view engine', 'ejs');
+app.get('/home', ( req, res) => {
+    res.render('home', {
+        msg: 'This is Twilio calling api'
+    })
+});
 
 
 require('./startup/config')();          // environement check 
@@ -18,5 +25,4 @@ require('./startup/logger');            // apiReq save
 const port = process.env.PORT || config.get('port');
 app.listen( port, () => {
     console.log(`Server is listening on ${port}...`);
-    winston.info(`Server is listening on ${port}...`);
 });

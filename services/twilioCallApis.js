@@ -33,21 +33,35 @@ const client = twilio( accountSid, authToken, {
 const VoiceResponse = twilio.twiml.VoiceResponse      
 
 
-// call send
-async function sendCall() {
+// simple call
+async function sendCall(phoneNumber) {
     const call = await client.calls.create({
       from: toFrom,
-      to:  toSend,
-      url: 'https://4d64-122-161-197-132.ngrok-free.app/api/call/conference',        
-      statusCallback: 'https://4d64-122-161-197-132.ngrok-free.app/api/call/status',                // yeh initiate krega ki status vali api bhi hit ho 
+      to:  phoneNumber || toSend,
+      url: 'https://55ce-122-161-197-132.ngrok-free.app/api/call/normal',
+    //   statusCallback: 'https://55ce-122-161-197-132.ngrok-free.app/api/call/status',                // yeh initiate krega ki status vali api bhi hit ho 
+    //   statusCallbackEvent: [ 'initiated', 'ringing', 'answered', 'completed' ]                        // yeh track kr payega ki kya status hai       
+    });
+    
+    console.log( "Caller Id => ", call.sid);
+    return ({ SId: call.sid , receiver: toSend});
+}
+
+// conference call
+async function sendConferenceCall(phoneNumber) {
+    const call = await client.calls.create({
+      from: toFrom,
+      to:  phoneNumber || toSend,
+      url: 'https://55ce-122-161-197-132.ngrok-free.app/api/call/conference',        
+      statusCallback: 'https://55ce-122-161-197-132.ngrok-free.app/api/call/status',                // yeh initiate krega ki status vali api bhi hit ho 
       statusCallbackEvent: [ 'initiated', 'ringing', 'answered', 'completed' ]                        // yeh track kr payega ki kya status hai       
     });
     
     console.log( "Caller Id => ", call.sid);
-    return ({ SId: call.sid , receiver: toSend})
+    return ({ SId: call.sid , receiver: toSend});
 }
 
-// conference logic 
+// conference                 
 async function conferenceCall() {
     const response = new VoiceResponse()
 
@@ -61,5 +75,6 @@ async function conferenceCall() {
 
 module.exports = {
     sendCall,
+    sendConferenceCall,
     conferenceCall
 } 

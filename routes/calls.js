@@ -1,5 +1,5 @@
 const express = require('express');
-const { sendCall, conferenceCall } = require('../services/twilioCallApis')
+const { sendCall, conferenceCall, sendConferenceCall } = require('../services/twilioCallApis')
 const sendSmsMessage = require('../services/twilioSendSms')
 const { sendWhatsappMsgWithContentSid, sendWhatsappMsgWithBody } = require('../services/twilioWhatsappMsg');
 const { generateToken, createRoom } = require('../services/twilioRoom');
@@ -9,15 +9,26 @@ const router = express.Router();
 
 // create call          // hit with start the ngrok and that link would be in the twilio
 router.post('/', async ( req , res ) => {                                                 
-    const callSid = await sendCall()
+    const phoneNumber = req.query.phoneNumber
+
+    const callSid = await sendCall(phoneNumber);
     
     res.status(200)
         .json({ 
             statusCode: 200, 
             message: 'Success', 
-            data: { msg: `Call will be ring on number ${ callSid.receiver }`, 'CallerSid ': callSid.SId } 
+            data: { msg: `Call will be ring on number ${ callSid.receiver }`, 'CallerSid': callSid.SId } 
         })
 })
+
+// call normal
+router.post('/normal', (req, res) => {
+    const response = new VoiceResponse();
+    response.say('You are now connected to the call.');
+    response.dial(toSend); 
+    res.type('text/xml');
+    res.send(response.toString());
+});
 
 // send message on sms
 router.post('/sms', async ( req , res ) => {                                                       
@@ -60,7 +71,7 @@ router.post('/whatsapp/body', async ( req , res ) => {
 
 // create Room for video call
 router.post('/createRoom', async ( req , res ) => {                                                       
-    const user = await User.findOne({ username: 'sagar'});
+    const user = await User.findOne({ fullName: 'David'});
     
     const identity = user.id;
     
@@ -87,14 +98,30 @@ router.post('/createRoom', async ( req , res ) => {
 })
 
 // conference call reference 
-router.post('/conference', async ( req , res ) => {
-    const result = await conferenceCall()
+router.post('/call-conference', async ( req , res ) => {
+
+    const phoneNumber = req.params.phoneNumber;
+    const callSid = await sendConferenceCall(phoneNumber);
+    
+    res.status(200)
+    .json({ 
+        statusCode: 200, 
+        message: 'Success', 
+        data: { msg: `Call will be ring on number ${ callSid.receiver }`, 'CallerSid ': callSid.SId } 
+    })
+})
+
+// conference call reference 
+router.post('/conference', async ( req , res ) => {    
+    const result = await conferenceCall();
     res.type('text/xml');
-    console.log(" \n\n Conference status: \n\n");
+    console.log("Conference XML Response: ", result.toString())
+    
     res.send(result.toString());
 })
 
-// it will be called by sendCall function
+
+// check status
 router.post('/status', (req, res) => {
     const callStatus = req.body.CallStatus;                 // Twilio se call ka status milega
     console.log(" \n Twilio Call Status:", callStatus);

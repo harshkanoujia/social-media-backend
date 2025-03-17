@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Social Media</title>
+
+        <style type="text/css" media="screen">
+            body {
+                background-color: rgb(85, 97, 101);
+                text-decoration-color: white;
+                font-size: 45px;
+                
+            }
+
+        </style>
+
+        <script>
+            async function makeCall() {
+                const phoneNumber = document.getElementById('phoneNumber').value;
+            
+                if (!phoneNumber) {
+                    alert("Please enter a phone number.");
+                    return;
+                }
+                
+                try {
+                    let response = await fetch(`/api/call/?phoneNumber=+91${phoneNumber}`, {
+                        method: "POST", 
+                        headers: { "Content-Type": "application/json" }
+                    });
+
+                    let data = await response.json();
+                    console.log("Response Data:", data);
+
+                    if (data.statusCode === 200) {
+                        alert("Call initiated successfully! Call SID: " + data.data.CallerSid);
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                } catch (error) {
+                    alert("Error making call: " + error.message);
+                }
+            }
+
+            async function addParticipant(params) {
+                const phoneNumber = document.getElementById('phoneNumber').value;
+            
+                if (!phoneNumber) {
+                    alert("Please enter a phone number.");
+                    return;
+                }
+                
+                try {
+                    let response = await fetch(`/api/call/call-conference?phoneNumber=+91${phoneNumber}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                    });
+
+                    let data = await response.json();
+                    console.log("Response Data:", data);
+
+                    if (data.statusCode === 200) {
+                        alert("Participant Added successfully! Call SID: " + data.data.CallerSid);
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                } catch (error) {
+                    alert("Error making call: " + error.message);
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <h2> Twilio Call Feature </h2>
+        
+        <label> Enter Phone Number: </label>
+        <input type="text" id="phoneNumber" placeholder="Enter recipient number">
+        
+        <button onclick="makeCall()"> Call </button>
+        
+        <br>
+        <br>
+
+        <label> Enter Participant Phone Number: </label>
+        <input type="text" id="phoneNumber" placeholder="Enter participant number">
+        <button onclick="addParticipant()"> Add participant </button>
+    </body>
+</html>
