@@ -8,16 +8,32 @@
         <style type="text/css" media="screen">
             body {
                 background-color: rgb(85, 97, 101);
-                text-decoration-color: white;
-                font-size: 45px;
-                
+                color: white;
+                font-size: 40px;
+                text-align: center;
+                padding: 10px;
             }
-
+            input {
+                font-size: 25px;
+                padding: 8px;
+                margin: 10px;
+            }
+            button {
+                font-size: 20px;
+                padding: 13px;
+                background-color: rgb(0, 0, 0);
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: rgb(81, 125, 81);
+            }
         </style>
 
         <script>
             async function makeCall() {
-                const phoneNumber = document.getElementById('phoneNumber').value;
+                const phoneNumber = document.getElementById('recipientNumber').value;
             
                 if (!phoneNumber) {
                     alert("Please enter a phone number.");
@@ -31,7 +47,8 @@
                     });
 
                     let data = await response.json();
-                    console.log("Response Data:", data);
+
+                    // console.log("Response Data:", data);
 
                     if (data.statusCode === 200) {
                         alert("Call initiated successfully! Call SID: " + data.data.CallerSid);
@@ -43,8 +60,8 @@
                 }
             }
 
-            async function addParticipant(params) {
-                const phoneNumber = document.getElementById('phoneNumber').value;
+            async function addParticipant() {
+                const phoneNumber = document.getElementById('participantNumber').value;
             
                 if (!phoneNumber) {
                     alert("Please enter a phone number.");
@@ -52,13 +69,13 @@
                 }
                 
                 try {
-                    let response = await fetch(`/api/call/call-conference?phoneNumber=+91${phoneNumber}`, {
+                    let response = await fetch(`/api/call/addParticipant?phoneNumber=+91${phoneNumber}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" }
                     });
 
                     let data = await response.json();
-                    console.log("Response Data:", data);
+                    console.log("Conference Response Data: ", data);
 
                     if (data.statusCode === 200) {
                         alert("Participant Added successfully! Call SID: " + data.data.CallerSid);
@@ -76,15 +93,15 @@
         <h2> Twilio Call Feature </h2>
         
         <label> Enter Phone Number: </label>
-        <input type="text" id="phoneNumber" placeholder="Enter recipient number">
+        <input type = "text" id = "recipientNumber" placeholder = "Enter recipient number" >
         
-        <button onclick="makeCall()"> Call </button>
+        <button onclick = "makeCall()" > Call </button>
         
         <br>
         <br>
 
         <label> Enter Participant Phone Number: </label>
-        <input type="text" id="phoneNumber" placeholder="Enter participant number">
-        <button onclick="addParticipant()"> Add participant </button>
+        <input type = "text" id = "participantNumber" placeholder = "Enter participant number" >
+        <button onclick = "addParticipant()" > Add participant </button>
     </body>
 </html>

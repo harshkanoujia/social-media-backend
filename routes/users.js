@@ -115,34 +115,6 @@ router.delete('/:id', async (req, res) => {
     res.status(200).json({ msg: 'User Deleted Successfully', User : user })
 })
 
-//get user 
-router.get('/', async ( req , res ) => {                                                       
-    
-    const users = await User.find();        
-    if(users.length === 0)  return res.status(200).json({ msg: 'No User Found !' })
-    
-    res.status(200).json({ "Users": users })
-})
-
-// User found by its Id
-router.get('/:id?', async (req, res) => {     
-    
-    const token = req.cookies.Token;
-    if(!token)  return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Success', data: { message: MIDDLEWARE_AUTH_CONSTANTS.INVALID_AUTH_TOKEN } }); 
-    
-    const decode = jwt.verify(token, config.get("jwtPrivateKey"));
-    req = decode;
-    console.log("REQ: ", req)  
-
-    const user = await User.findById(req._id)
-    console.log("DECODE: ", decode)  
-
-    if (!user) return res.status(400).json({err: "ID not found"})
-    
-    res.status(200).json({'User': user })
-})
-
-
 
 // ------------ Cookie ------------------------ 
 
@@ -392,6 +364,36 @@ router.post('/firebase/notification', async (req, res) => {
     const response = await sendNotification();
     res.status(200).json({ apiId: req.apiId, statusCode: 200, message: "Success", data: { msg: "the notification is send on device" } });
 })
+
+
+// ----- user routes -------
+//get user 
+router.get('/', async ( req , res ) => {                                                       
+    
+    const users = await User.find();        
+    if(users.length === 0)  return res.status(200).json({ msg: 'No User Found !' })
+    
+    res.status(200).json({ "Users": users })
+})
+
+// User found by its Id
+router.get('/:id?', async (req, res) => {     
+    
+    const token = req.cookies.Token;
+    if(!token)  return res.status(400).json({ apiId: req.apiId, statusCode: 400, message: 'Success', data: { message: MIDDLEWARE_AUTH_CONSTANTS.INVALID_AUTH_TOKEN } }); 
+    
+    const decode = jwt.verify(token, config.get("jwtPrivateKey"));
+    req = decode;
+    console.log("REQ: ", req)  
+
+    const user = await User.findById(req._id)
+    console.log("DECODE: ", decode)  
+
+    if (!user) return res.status(400).json({err: "ID not found"})
+    
+    res.status(200).json({'User': user })
+})
+
 
 
 // // update user
