@@ -1,10 +1,11 @@
 const admin = require("firebase-admin");
-const serviceAccountId = require('../config/social-media-3eec4-firebase-adminsdk-fbsvc-d6e52b8bc7.json');
+const serverKey = require('../config/social-media-3eec4-firebase-adminsdk-fbsvc-d6e52b8bc7.json');
+
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountId),
-})
-
+    credential: admin.credential.cert(serverKey),
+    databaseURL: "https://partyra-cb01e-default-rtdb.firebaseio.com",
+  });
 
 // get user by uid
 async function getUser(uid) {
